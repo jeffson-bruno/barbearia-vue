@@ -29,11 +29,19 @@ class HandleInertiaRequests extends Middleware
      */
     public function share(Request $request): array
     {
-        return [
-            ...parent::share($request),
+        return array_merge(parent::share($request), [
             'auth' => [
                 'user' => $request->user(),
             ],
-        ];
+            // prefixo do "app" atual: admin | barbeiro | cliente
+            'prefix' => $request->segment(1),
+            // cores do tema (opcional)
+            'theme' => [
+                'primary' => '#2563EB',
+                'accent'  => '#10B981',
+                'warn'    => '#F97316',
+            ],
+        ]);
     }
+
 }
