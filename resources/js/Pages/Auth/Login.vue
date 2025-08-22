@@ -6,6 +6,11 @@ import InputLabel from '@/Components/InputLabel.vue';
 import PrimaryButton from '@/Components/PrimaryButton.vue';
 import TextInput from '@/Components/TextInput.vue';
 import { Head, Link, useForm } from '@inertiajs/vue3';
+import { usePage } from '@inertiajs/vue3'
+
+const page = usePage()
+const prefix = page.props.prefix ?? '' // 'admin' | 'barbeiro' | 'cliente'
+
 
 defineProps({
     canResetPassword: {
@@ -23,9 +28,7 @@ const form = useForm({
 });
 
 const submit = () => {
-    form.post(route('login'), {
-        onFinish: () => form.reset('password'),
-    });
+    form.post(route(`${window.APP_PREFIX}.login`))
 };
 </script>
 

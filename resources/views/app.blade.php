@@ -14,6 +14,8 @@
         @routes
         @vite(['resources/js/app.js', "resources/js/Pages/{$page['component']}.vue"])
         @inertiaHead
+        <script>window.APP_PREFIX = "{{ request()->segment(1) }}";</script>
+
     </head>
     <body class="font-sans antialiased">
         @inertia
