@@ -13,40 +13,57 @@ use Inertia\Response;
 
 class AuthenticatedSessionController extends Controller
 {
-    /**
-     * Display the login view.
-     */
-    public function create(): Response
+    public function create()
     {
-        return Inertia::render('Auth/Login', [
-            'canResetPassword' => Route::has('password.request'),
-            'status' => session('status'),
+        return inertia('Auth/Login', [
+            // opcional: passa o prefixo atual para a view
+            'prefix' => request()->segment(1), // admin|barbeiro|cliente|null
         ]);
     }
 
-    /**
-     * Handle an incoming authentication request.
-     */
-    public function store(LoginRequest $request): RedirectResponse
+    public function store(LoginRequest $request)
     {
-        $request->authenticate();
-
+        $request->authenticate();  // Breeze faz a validação de credenciais
         $request->session()->regenerate();
 
-        return redirect()->intended(route('dashboard', absolute: false));
+        // Detecta o prefixo da rota atual:
+        $prefix = $request->segment(1); // ex.: 'admin', 'barbeiro', 'cliente'
+
+        // Decide o destino por prefixo:
+        switch ($prefix) {
+            case 'admin':
+                $intended = route('admin.dashboard');
+                break;
+            case 'barbeiro':
+                $intended = route('barbeiro.dashboard');
+                break;
+            case 'cliente':
+                $intended = route('cliente.dashboard');
+                break;
+            default:
+                // fallback se alguém acessou /login sem prefixo
+                $intended = url('/dashboard');
+        }
+
+        return redirect()->intended($intended);
     }
 
-    /**
-     * Destroy an authenticated session.
-     */
-    public function destroy(Request $request): RedirectResponse
+    public function destroy(Request $request)
     {
         Auth::guard('web')->logout();
 
         $request->session()->invalidate();
-
         $request->session()->regenerateToken();
 
-        return redirect('/');
+        // Mantém o prefixo no logout para voltar ao login do mesmo “app”
+        $prefix = $request->segment(1);
+        $loginRoute = match ($prefix) {
+            'admin'    => url('/admin/login'),
+            'barbeiro' => url('/barbeiro/login'),
+            'cliente'  => url('/cliente/login'),
+            default    => url('/login'),
+        };
+
+        return redirect($loginRoute);
     }
 }
