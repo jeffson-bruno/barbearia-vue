@@ -5,15 +5,18 @@ import InputLabel from '@/Components/InputLabel.vue';
 import PrimaryButton from '@/Components/PrimaryButton.vue';
 import TextInput from '@/Components/TextInput.vue';
 import { Head, useForm } from '@inertiajs/vue3';
+import { usePrefixPath } from '@/composables/usePrefixPath'
+
+const { post } = usePrefixPath()
 
 const form = useForm({
     password: '',
 });
 
 const submit = () => {
-    form.post(route('password.confirm'), {
-        onFinish: () => form.reset(),
-    });
+    form.post('confirm-password', form, {
+    onFinish: () => form.reset(),
+  })
 };
 </script>
 

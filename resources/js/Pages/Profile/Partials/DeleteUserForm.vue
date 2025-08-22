@@ -7,6 +7,9 @@ import SecondaryButton from '@/Components/SecondaryButton.vue';
 import TextInput from '@/Components/TextInput.vue';
 import { useForm } from '@inertiajs/vue3';
 import { nextTick, ref } from 'vue';
+import { usePrefixPath } from '@/composables/usePrefixPath'
+
+const { del } = usePrefixPath()
 
 const confirmingUserDeletion = ref(false);
 const passwordInput = ref(null);
@@ -22,7 +25,7 @@ const confirmUserDeletion = () => {
 };
 
 const deleteUser = () => {
-    form.delete(route('profile.destroy'), {
+    del('profile', {}, {
         preserveScroll: true,
         onSuccess: () => closeModal(),
         onError: () => passwordInput.value.focus(),

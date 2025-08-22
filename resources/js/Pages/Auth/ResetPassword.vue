@@ -5,6 +5,9 @@ import InputLabel from '@/Components/InputLabel.vue';
 import PrimaryButton from '@/Components/PrimaryButton.vue';
 import TextInput from '@/Components/TextInput.vue';
 import { Head, useForm } from '@inertiajs/vue3';
+import { usePrefixPath } from '@/composables/usePrefixPath'
+
+const { post } = usePrefixPath()
 
 const props = defineProps({
     email: {
@@ -25,9 +28,9 @@ const form = useForm({
 });
 
 const submit = () => {
-    form.post(route('password.store'), {
-        onFinish: () => form.reset('password', 'password_confirmation'),
-    });
+    form.post('reset-password', form, {
+    onFinish: () => form.reset('password', 'password_confirmation'),
+  })
 };
 </script>
 

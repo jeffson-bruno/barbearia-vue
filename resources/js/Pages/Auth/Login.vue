@@ -6,10 +6,9 @@ import InputLabel from '@/Components/InputLabel.vue';
 import PrimaryButton from '@/Components/PrimaryButton.vue';
 import TextInput from '@/Components/TextInput.vue';
 import { Head, Link, useForm } from '@inertiajs/vue3';
-import { usePage } from '@inertiajs/vue3'
+import { usePrefixPath } from '@/composables/usePrefixPath'
 
-const page = usePage()
-const prefix = page.props.prefix ?? '' // 'admin' | 'barbeiro' | 'cliente'
+const { post, path } = usePrefixPath()
 
 
 defineProps({
@@ -28,8 +27,8 @@ const form = useForm({
 });
 
 const submit = () => {
-    form.post(route(`${window.APP_PREFIX}.login`))
-};
+  post('login', form) // POST /{prefix}/login
+}
 </script>
 
 <template>
@@ -82,13 +81,6 @@ const submit = () => {
             </div>
 
             <div class="mt-4 flex items-center justify-end">
-                <Link
-                    v-if="canResetPassword"
-                    :href="route('password.request')"
-                    class="rounded-md text-sm text-gray-600 underline hover:text-gray-900 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
-                >
-                    Forgot your password?
-                </Link>
 
                 <PrimaryButton
                     class="ms-4"
