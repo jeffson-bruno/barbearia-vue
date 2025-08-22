@@ -5,23 +5,52 @@ use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
-Route::get('/', function () {
-    return Inertia::render('Welcome', [
-        'canLogin' => Route::has('login'),
-        'canRegister' => false, // se quiser esconder o link de registro
-        'laravelVersion' => Application::VERSION,
-        'phpVersion' => PHP_VERSION,
-    ]);
-});
+// Landing simples (opcional): redireciona para escolha de perfil ou cliente
+Route::get('/', fn () => Inertia::render('Welcome', [
+    'canLogin' => true,
+    'canRegister' => false,
+]));
 
-Route::middleware(['auth', 'verified'])->group(function () {
-    Route::get('/dashboard', fn () => Inertia::render('Dashboard'))->name('dashboard');
+// ============ ADMIN ============
+Route::prefix('admin')
+    ->as('admin.')
+    ->middleware(['session.ns:admin'])
+    ->group(function () {
+        // Auth (login/logout/forgot/etc) do Breeze, sob /admin/*
+        require __DIR__.'/auth.php';
 
-    Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
-    Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
-    Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
-});
+        // Rotas autenticadas do Admin
+        Route::middleware(['auth', 'verified'])->group(function () {
+            Route::get('/dashboard', fn () => Inertia::render('Dashboard'))->name('dashboard');
 
-// Autenticação (login/logout/etc)
-require __DIR__.'/auth.php';
+            Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
+            Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
+            Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+        });
+    });
 
+// ============ BARBEIRO ============
+Route::prefix('barbeiro')
+    ->as('barbeiro.')
+    ->middleware(['session.ns:barbeiro'])
+    ->group(function () {
+        require __DIR__.'/auth.php';
+
+        Route::middleware(['auth', 'verified'])->group(function () {
+            Route::get('/dashboard', fn () => Inertia::render('Barber/Dashboard'))->name('dashboard');
+            // adicione aqui páginas do barbeiro (minha agenda, etc.)
+        });
+    });
+
+// ============ CLIENTE ============
+Route::prefix('cliente')
+    ->as('cliente.')
+    ->middleware(['session.ns:cliente'])
+    ->group(function () {
+        require __DIR__.'/auth.php';
+
+        Route::middleware(['auth', 'verified'])->group(function () {
+            Route::get('/dashboard', fn () => Inertia::render('Client/Dashboard'))->name('dashboard');
+            // adicione aqui páginas do cliente (meus horários, planos, etc.)
+        });
+    });
