@@ -6,11 +6,14 @@ use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
 // Landing simples (opcional): redireciona para escolha de perfil ou cliente
-Route::get('/', fn () => Inertia::render('Welcome', [
-    'canLogin' => true,
-    'canRegister' => false,
-]));
-
+Route::get('/', function () {
+    return Inertia::render('Welcome', [
+        'canLogin'     => Route::has('login'),     // ok manter
+        'canRegister'  => false,                   // desative se não usar
+        'laravelVersion' => Application::VERSION,  // << voltou
+        'phpVersion'     => PHP_VERSION,           // << voltou
+    ]);
+});
 // ============ ADMIN ============
 Route::prefix('admin')
     ->as('admin.')
