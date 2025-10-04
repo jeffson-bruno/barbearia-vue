@@ -23,7 +23,7 @@ return Application::configure(basePath: dirname(__DIR__))
             'session.ns' => \App\Http\Middleware\SessionNamespace::class, // <-- novo alias
         ]);
 
-        //  anexar algo aos grupos "api" ou "web", depois de já terem sido definidos:
+        // anexar algo aos grupos "api" ou "web", depois de já terem sido definidos:
         // $middleware->appendToGroup('api', \Illuminate\Http\Middleware\AddLinkHeadersForPreloadedAssets::class);
         // $middleware->appendToGroup('web', \App\Http\Middleware\OutraCoisa::class);
     })
