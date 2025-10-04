@@ -6,7 +6,9 @@ import InputLabel from '@/Components/InputLabel.vue';
 import PrimaryButton from '@/Components/PrimaryButton.vue';
 import TextInput from '@/Components/TextInput.vue';
 import { Head, Link, useForm } from '@inertiajs/vue3';
-import { usePrefixPath } from '@/composables/usePrefixPath'
+import { usePrefixPath } from '@/composables/usePrefixedRoute'
+
+
 
 const { post, path } = usePrefixPath()
 
